@@ -11,12 +11,12 @@ use Webpatser\Uuid\Uuid;
 
 class Blog extends Controller
 {
+
     public function index(){
         $blog = BlogController::latest()->paginate(5);
         return new blogResource(true, 'List Data Blog', $blog);
     }
     
-
     public function store(Request $request){
         $validator = Validator::make($request->all(),[
             'title' => 'required',
@@ -51,20 +51,19 @@ class Blog extends Controller
 
     public function update(Request $request,$uuid)
     {
-        
         $validator = Validator::make($request->all(),[
             'title' => 'required',
-            'description' => 'required',
+            'description' => 'required'
         ]);
         
         if($validator->fails())
         {
-            return response()->json($validator->errors(),422);
+            return response()->json([$validator->errors(),$request->all()] ,422);
         }
         
         $blog = BlogController::where('uuid',$uuid)->first();
 
-        if($request()->hasFile('image')){
+        if($request->hasFile('image')){
             $image = $request->file('image');
             $image->storeAs('public/blogs', $image->hashName());
 
